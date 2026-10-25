@@ -1,6 +1,7 @@
-SITE PÚBLICO DE RESGATE
+DIAGNÓSTICO / CORREÇÃO
 
-O contador agora conta diretamente as Keys disponíveis no nó keys do Firebase em tempo real, em vez de depender apenas de settings/availableCount.
-O botão SIM abre o link configurado no Painel ADM e passa return_url como parâmetro. Quando a mesma sessão retorna ao site, tenta reservar uma Key com transação atômica, exibe-a e permite copiar.
+A estrutura das Keys mostrada no Firebase está correta: cada entrada possui key, redeemed e status. O site foi atualizado para aguardar a conexão do Realtime Database e repetir a tentativa de reserva até 3 vezes se a conexão cair.
 
-LIMITAÇÃO IMPORTANTE: isto detecta o retorno ao site, mas não prova que a pessoa concluiu o encurtador. O Alpha Rede precisa oferecer callback/verificação confiável para confirmar a conclusão de verdade. O parâmetro return_url só funciona se o encurtador aceitar/usar esse parâmetro ou se ele estiver configurado para voltar ao site.
+Se persistir, confira que o firebase-config.js em AMBAS as pastas usa a mesma databaseURL, que as regras foram publicadas no projeto sistema-keys-94d98 e que o navegador não está bloqueando a conexão. Faça novo deploy do conteúdo desta pasta e recarregue a página sem cache.
+
+O contador consulta o nó keys diretamente. O resgate marca status="redeemed" e redeemed=true atomicamente. A confirmação do término do encurtador ainda depende do suporte de retorno do Alpha Rede.

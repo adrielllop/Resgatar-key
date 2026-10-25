@@ -24,7 +24,7 @@ h1{font-size:30px;line-height:1.1;margin:8px 0 12px}p{color:#ccc;line-height:1.5
 <div class="buttons" id="choice"><button id="yes">SIM, QUERO RESGATAR</button><button id="no">NÃO, AGORA NÃO</button></div>
 <div class="keybox" id="keybox"><strong>SUA KEY ESTÁ PRONTA</strong><div class="keyvalue" id="keyvalue"></div><button id="copy">COPIAR KEY</button><button id="again">Voltar ao início</button></div>
 <div class="status" id="status" role="status"></div>
-<p class="note">O contador acompanha as Keys cadastradas no Firebase em tempo real. Ao retornar a esta página depois do encurtador, o sistema tenta reservar uma Key disponível.</p>
+<p class="note">O contador acompanha as Keys cadastradas no Firebase em tempo real. Ao retornar a esta página depois do encurtador, o sistema tenta reservar uma Key disponível e repete a tentativa se a conexão cair.</p>
 </main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -35,28 +35,49 @@ const $=s=>document.querySelector(s);let currentKey='';
 const isAvailable=v=>v && v.status!=='redeemed' && v.redeemed!==true;
 function updateCount(data){const vals=Object.values(data||{});$('#count').textContent=vals.filter(isAvailable).length.toLocaleString('pt-BR');}
 onValue(ref(db,'keys'),snap=>updateCount(snap.val()),err=>{$('#count').textContent='—';$('#status').textContent='Não foi possível consultar as Keys. Verifique a conexão e as regras do Firebase.';});
+async function waitForConnection(timeoutMs=10000){
+ const connectedRef=ref(db,'.info/connected');
+ return await new Promise((resolve,reject)=>{
+  let done=false;
+  const unsub=onValue(connectedRef,snap=>{
+   if(snap.val()===true&&!done){done=true;unsub();resolve(true);}
+  },err=>{if(!done){done=true;unsub();reject(err);}});
+  setTimeout(()=>{if(!done){done=true;unsub();reject(new Error('O Firebase não conectou. Confira internet e URL do banco.'));}},timeoutMs);
+ });
+}
 async function claimKey(){
- if(sessionStorage.getItem('key_claimed_this_session')==='1'){return}
- $('#status').textContent='Verificando Keys disponíveis...';
+ if(sessionStorage.getItem('key_claimed_this_session')==='1')return;
+ $('#status').textContent='Conectando ao Firebase e verificando Keys...';
  try{
-  const snap=await get(ref(db,'keys'));const data=snap.val()||{};
-  const entries=Object.entries(data).filter(([,v])=>isAvailable(v));
-  if(!entries.length){$('#status').textContent='No momento não há Keys disponíveis. Tente novamente mais tarde.';return}
-  for(const [id,record] of entries){
-   const result=await runTransaction(ref(db,'keys/'+id),current=>{
-    if(!isAvailable(current))return;
-    return {...current,status:'redeemed',redeemed:true,redeemedAt:Date.now()};
-   },{applyLocally:false});
-   if(result.committed){
-    currentKey=String(result.snapshot.val()?.key||record.key||id);
-    sessionStorage.setItem('key_claimed_this_session','1');
-    $('#keyvalue').textContent=currentKey;$('#keybox').style.display='block';$('#choice').style.display='none';
-    $('#intro').textContent='Pronto! Copie sua Key abaixo e use-a no produto.';
-    $('#status').textContent='Key reservada com sucesso.';return;
-   }
+  let lastError=null;
+  for(let attempt=1;attempt<=3;attempt++){
+   try{
+    await waitForConnection();
+    const snap=await get(ref(db,'keys'));
+    const data=snap.val()||{};
+    const entries=Object.entries(data).filter(([,v])=>isAvailable(v));
+    if(!entries.length){$('#status').textContent='No momento não há Keys disponíveis. Tente novamente mais tarde.';return;}
+    for(const [id,record] of entries){
+     try{
+      const result=await runTransaction(ref(db,'keys/'+id),current=>{
+       if(!isAvailable(current))return;
+       return {...current,status:'redeemed',redeemed:true,redeemedAt:Date.now()};
+      },{applyLocally:false});
+      if(result.committed){
+       currentKey=String(result.snapshot.val()?.key||record.key||id);
+       sessionStorage.setItem('key_claimed_this_session','1');
+       $('#keyvalue').textContent=currentKey;$('#keybox').style.display='block';$('#choice').style.display='none';
+       $('#intro').textContent='Pronto! Copie sua Key abaixo e use-a no produto.';
+       $('#status').textContent='Key reservada com sucesso.';return;
+      }
+     }catch(e){lastError=e;break;}
+    }
+    if(lastError)throw lastError;
+    $('#status').textContent='As Keys disponíveis foram alteradas enquanto você tentava resgatar. Tentando novamente...';
+   }catch(e){lastError=e;if(attempt<3){$('#status').textContent=`Conexão interrompida (tentativa ${attempt}/3). Tentando novamente...`;await new Promise(r=>setTimeout(r,800*attempt));}}
   }
-  $('#status').textContent='Outra pessoa resgatou as últimas Keys neste instante. Tente novamente.';
- }catch(e){$('#status').textContent='Não foi possível resgatar a Key: '+e.message+'. Confira as regras do Firebase.'}
+  $('#status').textContent='Não foi possível reservar a Key após 3 tentativas. Verifique se o site e o Painel ADM usam o mesmo Firebase, se as regras foram publicadas e se a conexão está estável.'+(lastError?' Detalhe: '+lastError.message:'');
+ }catch(e){$('#status').textContent='Erro ao conectar ao Firebase: '+e.message;}
 }
 function returnedFromShortener(){return sessionStorage.getItem('waiting_for_shortener')==='1'}
 function startReturnFlow(){if(returnedFromShortener()){sessionStorage.removeItem('waiting_for_shortener');claimKey()}}
