@@ -1,0 +1,5 @@
+SITE PÚBLICO DE RESGATE
+
+O site lê o contador e redireciona o botão SIM para o link configurado no Painel ADM. Publique em hospedagem HTTPS com suporte a módulos JavaScript.
+
+A entrega automática de uma Key depois do encurtador não é confirmada por este fluxo: isso requer um callback/retorno confiável do serviço Alpha Rede.

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resgatar Key de 6 Horas</title>
+<style>
+:root{--bg:#090909;--panel:#151515;--orange:#ff791f;--muted:#aaa}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top,#261308 0,#090909 42%);color:#fff;font:16px system-ui,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}
+main{width:min(520px,100%);background:#111;border:1px solid #3a2417;border-radius:24px;padding:28px;box-shadow:0 18px 60px #0009}
+.logo{font-weight:900;letter-spacing:2px;color:var(--orange);font-size:14px}.pill{display:inline-block;border:1px solid #58351e;border-radius:999px;padding:7px 12px;color:#ffc29b;font-size:12px;margin:14px 0}
+h1{font-size:30px;line-height:1.1;margin:8px 0 12px}p{color:#ccc;line-height:1.6}
+.count{margin:22px 0;background:#21170f;border:1px solid #553016;border-radius:16px;padding:18px;text-align:center}
+.count strong{display:block;font-size:30px;color:var(--orange)}.count span{font-size:12px;color:#d5b7a1;letter-spacing:1px}
+.buttons{display:grid;gap:12px;margin-top:22px}button{border:0;border-radius:13px;padding:15px;font-weight:800;font-size:16px;cursor:pointer}
+#yes{background:var(--orange);color:#1a0b03}#no{background:#282828;color:white;border:1px solid #444}
+.note{font-size:12px;color:#999;margin-top:18px}.status{margin-top:15px;color:#ffb78a;white-space:pre-wrap}
+</style></head>
+<body><main>
+<div class="logo">FFH4X • ACCESS</div><div class="pill">KEY PREMIUM · 6 HORAS</div>
+<h1>Resgatar sua Key</h1><p>Deseja resgatar sua key de 6 horas? Confirme abaixo para continuar.</p>
+<div class="count"><strong id="count">—</strong><span>KEYS DISPONÍVEIS</span></div>
+<div class="buttons"><button id="yes">SIM, QUERO RESGATAR</button><button id="no">NÃO, AGORA NÃO</button></div>
+<div class="status" id="status" role="status"></div>
+<p class="note">A quantidade é atualizada pelo Firebase em tempo real. O redirecionamento para o encurtador não confirma sozinho que a etapa foi concluída.</p>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { firebaseConfig } from "./firebase-config.js";
+const countEl=document.querySelector("#count"),statusEl=document.querySelector("#status");
+let db;
+try {
+ const app=initializeApp(firebaseConfig); db=getDatabase(app);
+ onValue(ref(db,"settings/availableCount"),s=>{const n=Number(s.val());countEl.textContent=Number.isFinite(n)&&n>=0?n:0;},e=>{countEl.textContent="—";statusEl.textContent="Não foi possível ler o contador. Confira as regras do Firebase.";});
+} catch(e){countEl.textContent="—";statusEl.textContent="Falha ao iniciar o Firebase. Confira firebase-config.js.";}
+document.querySelector("#yes").addEventListener("click",async()=>{
+ try{
+  onValue(ref(db,"settings/shortenerUrl"),s=>{
+   const url=String(s.val()||"").trim();
+   if(/^https?:\/\//i.test(url)) location.href=url;
+   else statusEl.textContent="O administrador ainda não configurou um link válido do encurtador.";
+  },{onlyOnce:true});
+ }catch(e){statusEl.textContent="Não foi possível abrir o encurtador. Confira a configuração.";}
+});
+document.querySelector("#no").addEventListener("click",()=>{document.querySelector("#no").remove();statusEl.textContent="Tudo bem! Você pode voltar quando quiser.";});
+</script></body></html>
