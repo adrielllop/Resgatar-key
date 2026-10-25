@@ -15,7 +15,7 @@ h1{font-size:30px;line-height:1.1;margin:8px 0 12px}p{color:#ccc;line-height:1.5
 #yes,#copy{background:var(--orange);color:#1a0b03}#no,#again{background:#282828;color:white;border:1px solid #444}
 .status{margin-top:14px;color:#ffb78a;white-space:pre-wrap;line-height:1.5}.keybox{display:none;margin-top:18px;padding:15px;background:#0b0b0b;border:1px solid #ff791f;border-radius:14px}
 .keyvalue{font-size:17px;overflow-wrap:anywhere;color:#fff;margin:10px 0;font-weight:800;user-select:all}
-.note{font-size:12px;color:#999;margin-top:18px}
+
 </style></head>
 <body><main>
 <div class="logo">FFH4X • ACCESS</div><div class="pill">KEY PREMIUM · 6 HORAS</div>
@@ -24,7 +24,7 @@ h1{font-size:30px;line-height:1.1;margin:8px 0 12px}p{color:#ccc;line-height:1.5
 <div class="buttons" id="choice"><button id="yes">SIM, QUERO RESGATAR</button><button id="no">NÃO, AGORA NÃO</button></div>
 <div class="keybox" id="keybox"><strong>SUA KEY ESTÁ PRONTA</strong><div class="keyvalue" id="keyvalue"></div><button id="copy">COPIAR KEY</button><button id="again">Voltar ao início</button></div>
 <div class="status" id="status" role="status"></div>
-<p class="note">O contador acompanha as Keys cadastradas no Firebase em tempo real. Ao retornar a esta página depois do encurtador, o sistema tenta reservar uma Key disponível e repete a tentativa se a conexão cair.</p>
+
 </main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -32,6 +32,21 @@ import {getDatabase,ref,onValue,get,runTransaction} from "https://www.gstatic.co
 import {firebaseConfig} from "./firebase-config.js";
 const app=initializeApp(firebaseConfig),db=getDatabase(app);
 const $=s=>document.querySelector(s);let currentKey='';
+const SAVED_KEY='mx_delivered_key_v1';
+function showDeliveredKey(key){
+ currentKey=String(key||'');
+ if(!currentKey)return false;
+ $('#keyvalue').textContent=currentKey;
+ $('#keybox').style.display='block';
+ $('#choice').style.display='none';
+ $('#intro').textContent='Pronto! Copie sua Key abaixo e use-a no produto.';
+ return true;
+}
+function restoreDeliveredKey(){
+ const saved=sessionStorage.getItem(SAVED_KEY);
+ if(saved){showDeliveredKey(saved);return true;}
+ return false;
+}
 const isAvailable=v=>v && v.status!=='redeemed' && v.redeemed!==true;
 function updateCount(data){const vals=Object.values(data||{});$('#count').textContent=vals.filter(isAvailable).length.toLocaleString('pt-BR');}
 onValue(ref(db,'keys'),snap=>updateCount(snap.val()),err=>{$('#count').textContent='—';$('#status').textContent='Não foi possível consultar as Keys. Verifique a conexão e as regras do Firebase.';});
@@ -46,8 +61,13 @@ async function waitForConnection(timeoutMs=10000){
  });
 }
 async function claimKey(){
- if(sessionStorage.getItem('key_claimed_this_session')==='1')return;
- $('#status').textContent='Conectando ao Firebase e verificando Keys...';
+ // Se a Key já foi entregue nesta aba, mostre a mesma novamente em vez de consumir outra.
+ if(restoreDeliveredKey())return;
+ if(sessionStorage.getItem('key_claimed_this_session')==='1'){
+  // Compatibilidade com versões anteriores que salvavam apenas a flag, sem salvar a Key.
+  sessionStorage.removeItem('key_claimed_this_session');
+ }
+
  try{
   let lastError=null;
   for(let attempt=1;attempt<=3;attempt++){
@@ -65,10 +85,11 @@ async function claimKey(){
       },{applyLocally:false});
       if(result.committed){
        currentKey=String(result.snapshot.val()?.key||record.key||id);
+       // Salva a Key antes de atualizar a tela: refresh/retorno não consome uma segunda Key.
+       sessionStorage.setItem(SAVED_KEY,currentKey);
        sessionStorage.setItem('key_claimed_this_session','1');
-       $('#keyvalue').textContent=currentKey;$('#keybox').style.display='block';$('#choice').style.display='none';
-       $('#intro').textContent='Pronto! Copie sua Key abaixo e use-a no produto.';
-       $('#status').textContent='Key reservada com sucesso.';return;
+       showDeliveredKey(currentKey);
+       $('#status').textContent='';return;
       }
      }catch(e){lastError=e;break;}
     }
@@ -80,7 +101,10 @@ async function claimKey(){
  }catch(e){$('#status').textContent='Erro ao conectar ao Firebase: '+e.message;}
 }
 function returnedFromShortener(){return sessionStorage.getItem('waiting_for_shortener')==='1'}
-function startReturnFlow(){if(returnedFromShortener()){sessionStorage.removeItem('waiting_for_shortener');claimKey()}}
+function startReturnFlow(){
+ if(restoreDeliveredKey())return;
+ if(returnedFromShortener()){sessionStorage.removeItem('waiting_for_shortener');claimKey();}
+}
 $('#yes').onclick=async()=>{
  try{const snap=await get(ref(db,'settings/shortenerUrl'));const url=String(snap.val()||'').trim();
   if(!/^https?:\/\//i.test(url)){$('#status').textContent='O administrador ainda não configurou um link válido do Alpha Rede.';return}
@@ -92,7 +116,7 @@ $('#yes').onclick=async()=>{
 };
 $('#no').onclick=()=>{$('#choice').style.display='none';$('#status').textContent='Tudo bem! Você pode voltar quando quiser.'};
 $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(currentKey);$('#status').textContent='Key copiada!'}catch(e){const r=document.createRange();r.selectNodeContents($('#keyvalue'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('#status').textContent='Selecione a Key e copie manualmente.'}};
-$('#again').onclick=()=>{sessionStorage.removeItem('key_claimed_this_session');$('#keybox').style.display='none';$('#choice').style.display='grid';$('#intro').textContent='Deseja resgatar sua key de 6 horas? Confirme abaixo para continuar pelo encurtador.';$('#status').textContent='';currentKey=''};
+$('#again').onclick=()=>{sessionStorage.removeItem('key_claimed_this_session');sessionStorage.removeItem(SAVED_KEY);$('#keybox').style.display='none';$('#choice').style.display='grid';$('#intro').textContent='Deseja resgatar sua key de 6 horas? Confirme abaixo para continuar pelo encurtador.';$('#status').textContent='';currentKey=''};
 window.addEventListener('pageshow',startReturnFlow);
-if(returnedFromShortener())startReturnFlow();
+if(!restoreDeliveredKey() && returnedFromShortener())startReturnFlow();
 </script></body></html>
