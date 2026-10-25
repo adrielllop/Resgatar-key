@@ -1,5 +1,6 @@
 SITE PÚBLICO DE RESGATE
 
-O site lê o contador e redireciona o botão SIM para o link configurado no Painel ADM. Publique em hospedagem HTTPS com suporte a módulos JavaScript.
+O contador agora conta diretamente as Keys disponíveis no nó keys do Firebase em tempo real, em vez de depender apenas de settings/availableCount.
+O botão SIM abre o link configurado no Painel ADM e passa return_url como parâmetro. Quando a mesma sessão retorna ao site, tenta reservar uma Key com transação atômica, exibe-a e permite copiar.
 
-A entrega automática de uma Key depois do encurtador não é confirmada por este fluxo: isso requer um callback/retorno confiável do serviço Alpha Rede.
+LIMITAÇÃO IMPORTANTE: isto detecta o retorno ao site, mas não prova que a pessoa concluiu o encurtador. O Alpha Rede precisa oferecer callback/verificação confiável para confirmar a conclusão de verdade. O parâmetro return_url só funciona se o encurtador aceitar/usar esse parâmetro ou se ele estiver configurado para voltar ao site.
