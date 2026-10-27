@@ -8,8 +8,8 @@ SISTEMA DE RESGATE DE KEYS — MESTREXIT
 - A Key entregue fica guardada na sessão atual do navegador para que uma atualização da página não consuma outra Key.
 
 FIREBASE
-Realtime Database: https://keys-sistema-xxmano-default-rtdb.firebaseio.com
-O endereço do banco foi configurado conforme solicitado. Os demais campos de firebase-config.js foram mantidos do arquivo anterior; se esta URL pertencer a outro projeto Firebase, confira apiKey, authDomain, projectId e appId no Console do Firebase.
+Realtime Database: https://sistema-keys-94d98-default-rtdb.firebaseio.com
+O endereço do Realtime Database foi configurado para o projeto sistema-keys-94d98.
 
 SEGURANÇA
 As regras incluídas permitem escrita pública e o painel não tem autenticação. Proteja o painel e o banco com Firebase Authentication e regras apropriadas antes de publicar.
