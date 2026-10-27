@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Resgatar Key de 6 Horas</title>
+<title>MestreXit | Resgatar Key de 1 Hora</title>
 <style>
 :root{--bg:#050505;--panel:#0d0d0d;--orange:#ff7900;--orange2:#ffad00;--muted:#b7b7b7;--line:#4b2609}*{box-sizing:border-box}
 body{margin:0;background:radial-gradient(ellipse at 50% -10%,#512000 0,transparent 42%),linear-gradient(145deg,#080808,#030303 72%);color:#f7f7f7;font:15px/1.45 system-ui,-apple-system,Segoe UI,Arial,sans-serif;min-height:100vh;display:grid;place-items:center;padding:22px;overflow-x:hidden}
@@ -16,14 +16,49 @@ h1{font-size:clamp(30px,7vw,43px);line-height:1.02;letter-spacing:-1.8px;margin:
 .buttons{display:grid;gap:10px;margin-top:20px}button{font:inherit;border:0;border-radius:12px;padding:15px 18px;font-weight:900;letter-spacing:.5px;cursor:pointer;transition:transform .16s,filter .16s}button:active{transform:scale(.985)}#yes,#copy{background:linear-gradient(100deg,#ffb000,#ff7900 55%,#ff9a00);color:#1b0b00;box-shadow:0 7px 24px #ff79002b,inset 0 1px #ffe1a0}#yes{min-height:54px}#no{background:#161616;color:#ddd;border:1px solid #373737}#copy{width:100%;display:flex;justify-content:center;align-items:center;gap:10px;min-height:55px;font-size:16px}
 .keybox{display:none;margin-top:23px;padding:clamp(15px,4vw,23px);background:linear-gradient(145deg,#15100b,#080808 70%);border:1px solid #b65a0a;border-radius:19px;box-shadow:inset 0 0 25px #ff79000a,0 0 24px #ff790018;animation:reveal .4s ease-out}.key-heading{display:flex;justify-content:center;align-items:center;gap:8px;color:#ff9b22;font-size:12px;font-weight:950;letter-spacing:1.5px;text-transform:uppercase}.keyvalue{font-size:clamp(18px,4.6vw,25px);letter-spacing:1px;overflow-wrap:anywhere;color:#fff;margin:17px 0;padding:18px 12px;text-align:center;font-weight:900;background:#050505;border:1px solid #ff7900;border-radius:12px;box-shadow:inset 0 0 20px #ff790010;user-select:all}.status{margin-top:13px;color:#ffb36d;text-align:center;font-size:13px;white-space:pre-wrap;line-height:1.5;overflow-wrap:anywhere}.details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:18px}.detail{border:1px solid #30251b;background:#0a0908;border-radius:13px;padding:14px 7px;text-align:center;min-width:0}.detail-icon{font-size:20px;color:#ff941e;margin-bottom:6px}.detail-label{font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase}.detail-value{font-size:12px;font-weight:850;color:#f2f2f2;margin-top:4px}.notice{display:flex;gap:12px;align-items:center;margin-top:15px;padding:14px;border:1px solid #4a2a12;border-radius:13px;background:linear-gradient(90deg,#1b1008,#0a0908)}.notice-icon{font-size:25px;color:#ff941e}.notice strong{display:block;color:#ff9b22;font-size:12px;letter-spacing:.8px}.notice span{display:block;color:#c6c6c6;font-size:12px;margin-top:3px}.footer{text-align:center;color:#777;font-size:10px;letter-spacing:2px;margin-top:22px}.footer b{color:#ff8a13}
 @keyframes reveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@media(max-width:390px){body{padding:10px}main{padding:18px 14px}.details{gap:6px}.detail{padding:12px 4px}.detail-value{font-size:11px}.keyvalue{letter-spacing:.2px}}
+
+/* Identidade MestreXit: preto, vermelho e laranja inspirados na logo enviada. */
+:root{--bg:#050303;--panel:#100807;--orange:#ff4a16;--orange2:#ffb52e;--muted:#b8a09a;--line:#57231a}
+body{background:radial-gradient(ellipse at 50% -10%,#791d0d 0,transparent 42%),radial-gradient(ellipse at 8% 95%,#8b160c33,transparent 30%),linear-gradient(145deg,#080404,#030202 72%);color:#fff5ef}
+body:before,body:after{display:block;background:linear-gradient(90deg,transparent,#ff4a16,transparent);filter:drop-shadow(0 0 9px #ff4a16);opacity:.72}
+main{background:linear-gradient(155deg,#170b09 0%,#080404 76%);border:1px solid #7a2b19;border-radius:17px;box-shadow:0 0 0 1px #ff4a161c,inset 0 0 35px #ff4a160a,0 25px 90px #000}
+main:before{background:linear-gradient(90deg,transparent,#ffb52e,#ff4a16,transparent);box-shadow:0 0 20px #ff4a16}
+.brand{flex-direction:column;gap:6px;color:#ffb52e;font-size:11px;letter-spacing:2.4px}
+.brand-logo{display:block;width:min(100%,330px);height:auto;object-fit:contain;background:#050303;border-radius:6px;filter:drop-shadow(0 0 12px #ff4a162b)}
+.hero .eyebrow{border:1px solid #71301a;background:#21100b;border-radius:999px;color:#ffc06b;letter-spacing:1.4px}
+.dot{background:#ff6a1b;box-shadow:0 0 10px #ff6a1b}
+h1 span{color:#ff671b;text-shadow:0 0 24px #ff4a1638}
+.subtitle{color:#d1bdb5}
+.count{border-color:#57251a;border-radius:10px;background:#0c0706;color:#c8b4ac}
+.count strong{color:#ffb52e}
+button{border-radius:10px}
+#yes,#copy{background:linear-gradient(100deg,#ffc13d,#ff6818 58%,#ed2b12);color:#210800;box-shadow:0 7px 24px #ff4a1635,inset 0 1px #ffe1a0}
+#yes:hover,#copy:hover{filter:brightness(1.08)}
+#no{background:#170b0a;color:#f0dfd8;border:1px solid #5a2a21}
+#no:hover{background:#2a110d}
+.keybox{background:linear-gradient(145deg,#1b0d09,#080404 70%);border:1px solid #a7461d;border-radius:13px;box-shadow:inset 0 0 25px #ff4a160a,0 0 24px #ff4a1618}
+.key-heading{color:#ffb52e}
+.keyvalue{background:#050303;border:1px solid #ff5a19;border-radius:9px;box-shadow:inset 0 0 20px #ff4a1610;color:#fff}
+.status{color:#ffc078}
+.detail{border-color:#51251b;background:#0c0706;border-radius:9px}
+.detail-icon{color:#ff9d28}
+.detail-label{color:#b7a29a}
+.detail-value{color:#fff1e9}
+.notice{border-color:#6a301c;border-radius:9px;background:linear-gradient(90deg,#21100b,#0a0605)}
+.notice-icon,.notice strong{color:#ffb52e}
+.notice span{color:#d4bdb2}
+.footer{color:#9b8177;letter-spacing:1.5px}
+.footer b{color:#ff6a1b}
+@media(max-width:390px){main{padding:18px 14px}.brand-logo{width:min(100%,290px)}}
+
 </style></head>
 <body><main>
-<div class="brand"><span class="brand-mark">MX</span><span>MestreXit • Access</span></div>
-<section class="hero"><div class="eyebrow"><span class="dot"></span> TESTE GRÁTIS · 6 HORAS</div><h1>SUA KEY <span>ESTÁ PRONTA!</span></h1><p class="subtitle" id="intro">Desbloqueie seu acesso de teste. Confirme abaixo e continue pelo encurtador.</p></section>
+<div class="brand"><img class="brand-logo" src="./mestexit-logo.png" alt="MestreXit"><span>ACESSO · MESTREXIT</span></div>
+<section class="hero"><div class="eyebrow"><span class="dot"></span> TESTE GRÁTIS · 1 HORA</div><h1>SUA KEY <span>ESTÁ PRONTA!</span></h1><p class="subtitle" id="intro">Desbloqueie sua Key de teste com validade de 1 hora. Confirme abaixo e continue pelo encurtador.</p></section>
 <div class="count"><span>KEYS DISPONÍVEIS</span><strong id="count">—</strong></div>
 <div class="buttons" id="choice"><button id="yes">SIM, QUERO MINHA KEY　➜</button><button id="no">NÃO, AGORA NÃO</button></div>
 <div class="keybox" id="keybox"><div class="key-heading"><span>✦</span> SUA KEY FOI LIBERADA <span>✦</span></div><div class="keyvalue" id="keyvalue"></div><button id="copy"><span aria-hidden="true">▢</span> COPIAR KEY</button></div>
-<div class="details"><div class="detail"><div class="detail-icon">◷</div><div class="detail-label">Duração</div><div class="detail-value">6 HORAS</div></div><div class="detail"><div class="detail-icon">◇</div><div class="detail-label">Uso correto</div><div class="detail-value">EVITE EXCESSOS</div></div><div class="detail"><div class="detail-icon">⚠</div><div class="detail-label">Atenção</div><div class="detail-value">USE MODERADO</div></div></div>
+<div class="details"><div class="detail"><div class="detail-icon">◷</div><div class="detail-label">Duração</div><div class="detail-value">1 HORA</div></div><div class="detail"><div class="detail-icon">◇</div><div class="detail-label">Uso correto</div><div class="detail-value">EVITE EXCESSOS</div></div><div class="detail"><div class="detail-icon">⚠</div><div class="detail-label">Atenção</div><div class="detail-value">USE MODERADO</div></div></div>
 <div class="notice"><div class="notice-icon">✦</div><div><strong>APROVEITE SEU TESTE!</strong><span>Key grátis para teste. Use com responsabilidade e moderação.</span></div></div>
 <div class="status" id="status" role="status" aria-live="polite"></div><div class="footer">POWERED BY <b>MESTREXIT</b> · USE COM RESPONSABILIDADE</div>
 </main>
