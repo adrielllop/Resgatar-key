@@ -55,9 +55,9 @@ button{border-radius:10px}
 </style></head>
 <body><main>
 <div class="brand"><img class="brand-logo" src="./mestexit-logo.png" alt="MestreXit"><span>ACESSO · MESTREXIT</span></div>
-<section class="hero"><div class="eyebrow"><span class="dot"></span> TESTE GRÁTIS · 1 HORA</div><h1>SUA KEY <span>ESTÁ PRONTA!</span></h1><p class="subtitle" id="intro">Desbloqueie sua Key de teste com validade de 1 hora. Confirme abaixo para solicitar sua Key.</p></section>
+<section class="hero"><div class="eyebrow"><span class="dot"></span> TESTE GRÁTIS · 1 HORA</div><h1>SUA KEY <span>ESTÁ PRONTA!</span></h1><p class="subtitle" id="intro">Clique abaixo para resgatar sua Key de teste de 1 hora. A liberação é automática, sem aprovação do administrador.</p></section>
 <div class="count"><span>KEYS DISPONÍVEIS</span><strong id="count">—</strong></div>
-<div class="buttons" id="choice"><button id="yes">SIM, QUERO MINHA KEY　➜</button><button id="no">NÃO, AGORA NÃO</button></div>
+<div class="buttons" id="choice"><button id="yes">RESGATAR MINHA KEY AUTOMATICAMENTE　➜</button></div>
 <div class="keybox" id="keybox"><div class="key-heading"><span>✦</span> SUA KEY FOI LIBERADA <span>✦</span></div><div class="keyvalue" id="keyvalue"></div><button id="copy"><span aria-hidden="true">▢</span> COPIAR KEY</button></div>
 <div class="details"><div class="detail"><div class="detail-icon">◷</div><div class="detail-label">Duração</div><div class="detail-value">1 HORA</div></div><div class="detail"><div class="detail-icon">◇</div><div class="detail-label">Uso correto</div><div class="detail-value">EVITE EXCESSOS</div></div><div class="detail"><div class="detail-icon">⚠</div><div class="detail-label">Atenção</div><div class="detail-value">USE MODERADO</div></div></div>
 <div class="notice"><div class="notice-icon">✦</div><div><strong>APROVEITE SEU TESTE!</strong><span>Key grátis para teste. Use com responsabilidade e moderação.</span></div></div>
@@ -143,9 +143,8 @@ async function claimKey(){
  }catch(e){$('#status').textContent='Erro ao conectar ao Firebase: '+e.message;}
  finally{claimInProgress=false;}
 }
-$('#yes').onclick=()=>{claimKey();};
+$('#yes').onclick=()=>{const btn=$('#yes');btn.disabled=true;btn.textContent='RESERVANDO SUA KEY...';claimKey().finally(()=>{if(!currentKey){btn.disabled=false;btn.textContent='TENTAR NOVAMENTE';}});};
 
-$('#no').onclick=()=>{$('#choice').style.display='none';$('#status').textContent='Tudo bem! Você pode voltar quando quiser.'};
 $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(currentKey);$('#status').textContent='Key copiada!'}catch(e){const r=document.createRange();r.selectNodeContents($('#keyvalue'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('#status').textContent='Selecione a Key e copie manualmente.'}};
 if(!restoreDeliveredKey()) { /* aguardando ação voluntária do visitante */ }
 
