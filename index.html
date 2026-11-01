@@ -54,7 +54,7 @@ button{border-radius:10px}
 </style></head>
 <body><main>
 <div class="brand"><img class="brand-logo" src="./mestexit-logo.png" alt="MestreXit"><span>ACESSO · MESTREXIT</span></div>
-<section class="hero"><div class="eyebrow"><span class="dot"></span> TESTE GRÁTIS · 1 HORA</div><h1>SUA KEY <span>ESTÁ PRONTA!</span></h1><p class="subtitle" id="intro">Desbloqueie sua Key de teste com validade de 1 hora. Confirme abaixo e continue pelo encurtador.</p></section>
+<section class="hero"><div class="eyebrow"><span class="dot"></span> TESTE GRÁTIS · 1 HORA</div><h1>SUA KEY <span>ESTÁ PRONTA!</span></h1><p class="subtitle" id="intro">Desbloqueie sua Key de teste com validade de 1 hora. Confirme abaixo para solicitar sua Key.</p></section>
 <div class="count"><span>KEYS DISPONÍVEIS</span><strong id="count">—</strong></div>
 <div class="buttons" id="choice"><button id="yes">SIM, QUERO MINHA KEY　➜</button><button id="no">NÃO, AGORA NÃO</button></div>
 <div class="keybox" id="keybox"><div class="key-heading"><span>✦</span> SUA KEY FOI LIBERADA <span>✦</span></div><div class="keyvalue" id="keyvalue"></div><button id="copy"><span aria-hidden="true">▢</span> COPIAR KEY</button></div>
@@ -98,7 +98,7 @@ async function waitForConnection(timeoutMs=10000){
  });
 }
 async function claimKey(){
- // Só resgata após o retorno do encurtador; evita duas reservas simultâneas.
+ // Resgate direto da Key; evita duas reservas simultâneas.
  if(restoreDeliveredKey() || claimInProgress)return;
  claimInProgress=true;
  if(sessionStorage.getItem('key_claimed_this_session')==='1'){
@@ -142,23 +142,14 @@ async function claimKey(){
  }catch(e){$('#status').textContent='Erro ao conectar ao Firebase: '+e.message;}
  finally{claimInProgress=false;}
 }
-function returnedFromShortener(){return sessionStorage.getItem('waiting_for_shortener')==='1'}
-function startReturnFlow(){
- if(restoreDeliveredKey())return;
- if(returnedFromShortener()){sessionStorage.removeItem('waiting_for_shortener');claimKey();}
-}
-$('#yes').onclick=async()=>{
- try{const snap=await get(ref(db,'settings/shortenerUrl'));const url=String(snap.val()||'').trim();
-  if(!/^https?:\/\//i.test(url)){$('#status').textContent='O administrador ainda não configurou um link válido do Alpha Rede.';return}
-  sessionStorage.setItem('waiting_for_shortener','1');
-  // Pass return URL as a query parameter when the shortener accepts it.
-  const returnUrl=new URL(location.href.split('#')[0]);returnUrl.searchParams.set('mx_return','1');
-  const target=new URL(url);target.searchParams.set('return_url',returnUrl.toString());
-  location.href=target.toString();
- }catch(e){$('#status').textContent='Não foi possível abrir o encurtador: '+e.message}
-};
+$('#yes').onclick=()=>{claimKey();};
+
 $('#no').onclick=()=>{$('#choice').style.display='none';$('#status').textContent='Tudo bem! Você pode voltar quando quiser.'};
 $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(currentKey);$('#status').textContent='Key copiada!'}catch(e){const r=document.createRange();r.selectNodeContents($('#keyvalue'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('#status').textContent='Selecione a Key e copie manualmente.'}};
-window.addEventListener('pageshow',startReturnFlow);
-if(!restoreDeliveredKey() && returnedFromShortener())startReturnFlow();
+// Monetag Service Worker: o arquivo sw.js deve estar na raiz deste domínio.
+if ('serviceWorker' in navigator) {
+ navigator.serviceWorker.register('./sw.js').catch(err => console.warn('Monetag SW não foi registrado:', err));
+}
+if(!restoreDeliveredKey()) { /* aguardando ação voluntária do visitante */ }
+
 </script></body></html>

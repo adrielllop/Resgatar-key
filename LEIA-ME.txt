@@ -16,8 +16,8 @@ As regras incluídas permitem escrita pública e o painel não tem autenticaçã
 
 
 MONETAG
-- Inclui sw.js na raiz do projeto com domínio 3nbf4.com e zoneId 12171328, conforme arquivo fornecido pelo proprietário.
+- Inclui sw.js na raiz do projeto com domínio 5gvci.com e zoneId 12171384, conforme o arquivo Monetag enviado pelo proprietário.
 - A página pública registra ./sw.js quando o visitante acessa o site.
-- O botão de solicitar Key agora chama o resgate diretamente; não depende mais do Alpha Encurtador.
+- O botão de solicitar Key chama o resgate diretamente pelo Firebase; não redireciona para Alpha Encurtador nem outro encurtador.
 - O Service Worker não equivale a um encurtador nem garante anúncio intersticial em cada acesso. O formato e a monetização dependem da zona e da aprovação/configuração na conta Monetag.
 - Não registre impressões ou cliques artificialmente; valide os relatórios no painel da Monetag.
